@@ -1,5 +1,12 @@
 <?php
 
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+
+
 $connect = mysqli_connect(
     'db', # service name
     'php_docker', # username
@@ -7,17 +14,18 @@ $connect = mysqli_connect(
     'php_docker' # db table
 );
 
-$table_name = "php_docker_table";
+$table_name = "sensors";
 
 $query = "SELECT * FROM $table_name";
 
 $response = mysqli_query($connect, $query);
 
-echo "<strong>$table_name: </strong>";
-while($i = mysqli_fetch_assoc($response))
-{
-    echo "<p>".$i['title']."</p>";
-    echo "<p>".$i['body']."</p>";
-    echo "<p>".$i['date_created']."</p>";
-    echo "<hr>";
+$data = array();
+while($row = mysqli_fetch_assoc($response)) {
+    $data['Level'] = $row['Level']; // Assuming 'Level' is the column name in your sensors table
 }
+
+// Output the data as JSON
+header('Content-Type: application/json');
+echo json_encode($data);
+?>
